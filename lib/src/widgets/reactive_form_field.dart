@@ -147,6 +147,13 @@ class ReactiveFormFieldState<ModelDataType, ViewDataType>
   @override
   void didUpdateWidget(
       ReactiveFormField<ModelDataType, ViewDataType> oldWidget) {
+    final newControl = _resolveFormControl();
+    if (control != newControl) {
+      unsubscribeControl();
+      control = newControl;
+      subscribeControl();
+      didUpdateControl();
+    }
     if (widget.valueAccessor != null && widget.valueAccessor != valueAccessor) {
       valueAccessor.dispose();
       _valueAccessor = widget.valueAccessor!;
@@ -158,12 +165,12 @@ class ReactiveFormFieldState<ModelDataType, ViewDataType>
 
   @override
   void didChangeDependencies() {
-    final newControl = _resolveFormControl();
-    if (control != newControl) {
-      unsubscribeControl();
-      control = newControl;
-      subscribeControl();
-    }
+    // final newControl = _resolveFormControl();
+    // if (control != newControl) {
+    //   unsubscribeControl();
+    //   control = newControl;
+    //   subscribeControl();
+    // }
 
     super.didChangeDependencies();
   }
@@ -174,6 +181,8 @@ class ReactiveFormFieldState<ModelDataType, ViewDataType>
     _valueAccessor.dispose();
     super.dispose();
   }
+
+  void didUpdateControl() {}
 
   @protected
   @mustCallSuper

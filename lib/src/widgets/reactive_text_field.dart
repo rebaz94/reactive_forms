@@ -234,18 +234,18 @@ class _ReactiveTextFieldState<T> extends ReactiveFormFieldState<T, String> {
   void initState() {
     super.initState();
     _initializeTextController();
-  }
-
-  @override
-  void subscribeControl() {
     _registerFocusController(FocusController());
-    super.subscribeControl();
   }
 
   @override
-  void unsubscribeControl() {
+  void dispose() {
     _unregisterFocusController();
-    super.unsubscribeControl();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateControl() {
+    _setInitialValue();
   }
 
   @override
@@ -294,11 +294,15 @@ class _ReactiveTextFieldState<T> extends ReactiveFormFieldState<T, String> {
   }
 
   void _initializeTextController() {
-    final initialValue = value;
     final currentWidget = widget as ReactiveTextField<T>;
     _textController = (currentWidget._textController != null)
         ? currentWidget._textController!
         : TextEditingController();
+    _setInitialValue();
+  }
+
+  void _setInitialValue() {
+    final initialValue = value;
     _textController.text = initialValue == null ? '' : initialValue.toString();
   }
 }
